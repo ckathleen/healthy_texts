@@ -1,15 +1,17 @@
 const config = require('./config')
 const contact_directory = require('./contact_directory')
-
+const inspiring_texts = require('./inspiring_texts')
 const client = require('twilio')(config.accountSid, config.authToken)
-const contacts = contact_directory
+const date = new Date()
 
-for (const contact in contacts) {
-    console.log('contact: ', contacts[contact])
-    client.messages.create({
-        to: contacts[contact],
-        from: '+12015542208',
-        body: "It is okay to feel hungry."
-    })
-    .then((message) => console.log(message, message.sid))
+//Every 3 hours between 9am and 9pm, send the corresponding text in inspiring_texts.js
+function sendText () {
+    for (const contact in contact_directory) {
+        client.messages.create({
+            to: contact_directory[contact],
+            from: '+12015542208',
+            body: inspiring_texts[date.getHours()]
+        })
+        .then((message) => console.log(message, message.sid))
+    }
 }
